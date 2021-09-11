@@ -1,10 +1,10 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, Column, PrimaryColumn} from "typeorm";
 import { User } from "../../entities/user";
 
 @Entity()
 export class UserDB implements User {
 
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: string;
 
     @Column()

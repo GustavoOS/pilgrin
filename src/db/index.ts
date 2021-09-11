@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { v4 as uuidv4 } from 'uuid';
 import { UserDB as User } from "./schema/User";
 
 
@@ -8,6 +9,7 @@ import { UserDB as User } from "./schema/User";
         const connection = await createConnection();
         console.log("Inserting a new user into the database...");
         const user = new User();
+        user.id = uuidv4();
         user.firstName = "Timber";
         user.lastName = "Saw";
         user.age = 25;
