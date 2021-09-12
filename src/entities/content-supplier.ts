@@ -1,10 +1,9 @@
-import { Product } from "./product";
+import { Resetable } from "./resetable";
 
-interface ContentSupplier {
+interface ContentSupplier extends Resetable{
     id: string,
     name: string,
-    products: Product[]
-    addProduct(product: Product): void
+    products: string[]
 }
 
 export { ContentSupplier }

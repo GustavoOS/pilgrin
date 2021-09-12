@@ -1,13 +1,12 @@
-import { Consumption } from "./consumption";
-import { ContentSupplier } from "./content-supplier";
+import { Resetable } from "./resetable";
 
-interface Product {
+interface Product extends Resetable {
     id: string,
     title: string,
     size: number,
     price: number,
-    supplier: ContentSupplier,
-    consumptions: Consumption[]
+    supplier: string,
+    consumptions: string[]
 }
 
 export { Product }

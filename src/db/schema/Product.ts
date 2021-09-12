@@ -10,8 +10,8 @@ export class ProductDB implements Product {
     @PrimaryColumn()
     id: string;
 
-    @ManyToOne(() => ContentSupplierDB, supplier => supplier.products, { onDelete: 'CASCADE' })
-    supplier: ContentSupplierDB
+    @Column({nullable: true})
+    supplier: string
 
     @Column()
     title: string
@@ -22,6 +22,11 @@ export class ProductDB implements Product {
     @Column()
     price: number
 
-    @OneToMany(() => ConsumptionDB, consumption => consumption.product)
-    consumptions: ConsumptionDB[]
+    @Column("simple-array")
+    consumptions: string[]
+
+    reset(func: CallableFunction) {
+        this.id = func();
+        this.consumptions = [];
+    }
 }

@@ -17,7 +17,12 @@ export class UserDB implements User{
     @Column()
     age: number;
 
-    @OneToMany(() => ConsumptionDB, consumption => consumption.user)
-    consumptions: ConsumptionDB[]
+    @Column("simple-array")
+    consumptions: string[]
+
+    reset(func: CallableFunction) {
+        this.id = func();
+        this.consumptions = []
+    }
 
 }

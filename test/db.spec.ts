@@ -15,81 +15,88 @@ describe('test database', () => {
         connection = await createConnection();
     })
 
-    // test('test user', async () => {
-    //     const users = connection.getRepository(UserDB);
-    //     const id = uuidv4();
-    //     const user = new UserDB();
-    //     user.id = id;
-    //     user.firstName = "Carlito";
-    //     user.lastName = "Paes";
-    //     user.age = 50;
-    //     await users.save(user);
-    //     const stored: UserDB = await users.findOne({ 'id': id });
-    //     expect(stored.firstName).toEqual("Carlito");
-    //     expect(stored.lastName).toEqual("Paes")
-    //     expect(stored.age).toEqual(50)
-    //     await users.delete(user)
-    // })
+    test('test user', async () => {
+        const users = connection.getRepository(UserDB);
+        const user = new UserDB();
+        user.reset(uuidv4);
+        user.firstName = "Carlito";
+        user.lastName = "Paes";
+        user.age = 50;
+        await users.save(user);
+        const stored: UserDB = await users.findOne(user.id);
+        expect(stored.firstName).toEqual("Carlito");
+        expect(stored.lastName).toEqual("Paes")
+        expect(stored.age).toEqual(50)
+        await users.delete(user)
+    })
 
-    // test('test supplier', async () => {
-    //     const suppliers = connection.getRepository(ContentSupplierDB);
-    //     const supplier = createSupplier();
-    //     await suppliers.save(supplier);
-    //     const stored: ContentSupplierDB = await suppliers.findOne(supplier);
-    //     expect(stored.id).toEqual(supplier.id);
-    //     expect(stored.name).toEqual("Editora Pilgrin")
-    //     expect(stored.products).toBeUndefined()
-    //     await suppliers.delete(supplier)
-    // })
+    test('test supplier', async () => {
+        const suppliers = connection.getRepository(ContentSupplierDB);
+        const supplier = createSupplier();
+        await suppliers.save(supplier);
+        const stored: ContentSupplierDB = await suppliers.findOne(supplier.id);
+        expect(stored.id).toEqual(supplier.id);
+        expect(stored.name).toEqual("Editora Pilgrin")
+        expect(Array.isArray(stored.products)).toBeTruthy()
+        await suppliers.delete(supplier)
+    })
 
     test('test product', async () => {
         const suppliers = connection.getRepository(ContentSupplierDB);
         const products = connection.getRepository(ProductDB);
+        const supplier = createSupplier();
         let product = new ProductDB();
-        product.id = uuidv4();
+        product.reset(uuidv4);
         product.price = 50;
         product.size = 1000;
-        product.title = "Devocional"
+        product.title = "Devocional";
+        product.supplier = supplier.id;
         await products.save(product);
-        const supplier = createSupplier();
-        supplier.addProduct(product);
+        supplier.products = [product.id];
         await suppliers.save(supplier);
-        product = await products.findOne(product.id, {relations: ['supplier']});
-        expect(product.supplier.id).toEqual(supplier.id);
+        expect(product.supplier).toEqual(supplier.id);
+        expect(supplier.products[0]).toEqual(product.id)
         expect(product.title).toEqual("Devocional");
         products.delete(product);
-        // TODO investigate why supplier cannot be deleted
         suppliers.delete(supplier);
     })
 
-    // test('test consumption', async()=>{
-    //     const products = connection.getRepository(ProductDB);
-    //     const suppliers = connection.getRepository(ContentSupplierDB);
-    //     const users = connection.getRepository(UserDB);
-    //     let product = await createProduct(products);
-    //     await products.save(product);
-    //     const supplier = createSupplier();
-    //     supplier.addProduct(product);
-    //     await suppliers.save(supplier);
-    //     let user = await createUser(uuidv4(), users)
-    //     const consumptions = connection.getRepository(ConsumptionDB);
-    //     let consumption = new ConsumptionDB();
-    //     consumption.id = uuidv4();
-    //     consumption.start_location = 0;
-    //     consumption.end_location = 25;
-    //     consumptions.save(consumption);
-    //     user.consumptions = [consumption];
-    //     await users.save(user);
-    //     product.consumptions = [consumption];
-    //     await products.save(product);
-    //     console.log(consumption.user);
-    //     expect(user.consumptions[0].product).toBeDefined();
-    // })
+    test('test consumption', async()=>{
+        const products = connection.getRepository(ProductDB);
+        const users = connection.getRepository(UserDB);
+        let product = await createProduct(products);
+        await products.save(product);
+        let user = await createUser(users)
+        const consumptions = connection.getRepository(ConsumptionDB);
+        let consumption = new ConsumptionDB();
+        consumption.reset(uuidv4);
+        consumption.start_location = 0;
+        consumption.end_location = 25;
+        consumption.product = product.id;
+        consumption.user = user.id
+        consumptions.save(consumption);
+        user.consumptions = [consumption.id];
+        await users.save(user);
+        product.consumptions = [consumption.id];
+        await products.save(product);
+        expect(consumption.user).toEqual(user.id)
+        expect(consumption.product).toEqual(product.id)
+        expect(user.consumptions[0]).toEqual(consumption.id)
+        expect(product.consumptions[0]).toEqual(consumption.id)
+    })
 })
 
-async function createUser(id: any, users) {
+
+function createSupplier() {
+    const supplier = new ContentSupplierDB();
+    supplier.reset(uuidv4);
+    supplier.name = "Editora Pilgrin";
+    return supplier;
+}
+
+async function createUser(users) {
     const user = new UserDB();
-    user.id = id;
+    user.reset(uuidv4);
     user.firstName = "Carlito";
     user.lastName = "Paes";
     user.age = 50;
@@ -99,17 +106,10 @@ async function createUser(id: any, users) {
 
 async function createProduct(products) {
     let product = new ProductDB();
-    product.id = uuidv4();
+    product.reset(uuidv4);
     product.price = 50;
     product.size = 1000;
     product.title = "Devocional";
     await products.save(product);
     return product;
-}
-
-function createSupplier() {
-    const supplier = new ContentSupplierDB();
-    supplier.id = uuidv4();
-    supplier.name = "Editora Pilgrin";
-    return supplier;
 }

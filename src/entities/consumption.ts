@@ -1,10 +1,9 @@
-import { Product } from './product'
-import { User } from './user';
+import { Resetable } from "./resetable";
 
-interface Consumption {
+interface Consumption extends Resetable {
     id: string,
-    product: Product,
-    user: User,
+    product: string,
+    user: string,
     start_location: number
     end_location: number
     getRange(): number

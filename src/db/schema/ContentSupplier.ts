@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryColumn, OneToMany, JoinColumn } from "typeorm";
 import { ContentSupplier } from "../../entities/content-supplier";
-import { ProductDB } from "./Product";
 
 
 @Entity()
@@ -12,13 +11,11 @@ export class ContentSupplierDB implements ContentSupplier {
     @Column()
     name: string;
 
-    @OneToMany(() => ProductDB, product => product.supplier,
-        { cascade: true, onDelete: 'CASCADE'})
-    products: ProductDB[];
+    @Column("simple-array")
+    products: string[];
 
-    addProduct(product: ProductDB) {
-        if (!this.products)
-            this.products = [];
-        this.products.push(product);
+    reset(func: CallableFunction) {
+        this.id = func();
+        this.products = [];
     }
 }
