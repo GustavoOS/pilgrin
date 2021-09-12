@@ -1,5 +1,6 @@
-import { Entity, PrimaryColumn, ManyToOne, Column } from "typeorm";
+import { Entity, PrimaryColumn, ManyToOne, Column, OneToMany } from "typeorm";
 import { Product } from "../../entities/product";
+import { ConsumptionDB } from "./ConsumptionDB";
 import { ContentSupplierDB } from "./ContentSupplier";
 
 
@@ -9,7 +10,7 @@ export class ProductDB implements Product {
     @PrimaryColumn()
     id: string;
 
-    @ManyToOne(() => ContentSupplierDB, supplier => supplier.products)
+    @ManyToOne(() => ContentSupplierDB, supplier => supplier.products, { onDelete: 'CASCADE' })
     supplier: ContentSupplierDB
 
     @Column()
@@ -21,4 +22,6 @@ export class ProductDB implements Product {
     @Column()
     price: number
 
+    @OneToMany(() => ConsumptionDB, consumption => consumption.product)
+    consumptions: ConsumptionDB[]
 }

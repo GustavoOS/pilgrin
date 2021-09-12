@@ -13,7 +13,7 @@ export class ContentSupplierDB implements ContentSupplier {
     name: string;
 
     @OneToMany(() => ProductDB, product => product.supplier,
-        { cascade: true})
+        { cascade: true, onDelete: 'CASCADE'})
     products: ProductDB[];
 
     addProduct(product: ProductDB) {

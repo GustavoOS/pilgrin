@@ -1,8 +1,9 @@
-import {Entity, Column, PrimaryColumn} from "typeorm";
+import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
 import { User } from "../../entities/user";
+import { ConsumptionDB } from "./ConsumptionDB";
 
 @Entity()
-export class UserDB implements User {
+export class UserDB implements User{
 
     @PrimaryColumn()
     id: string;
@@ -15,5 +16,8 @@ export class UserDB implements User {
 
     @Column()
     age: number;
+
+    @OneToMany(() => ConsumptionDB, consumption => consumption.user)
+    consumptions: ConsumptionDB[]
 
 }

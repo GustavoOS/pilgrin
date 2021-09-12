@@ -7,6 +7,7 @@ interface Consumption {
     user: User,
     start_location: number
     end_location: number
+    getRange(): number
 }
 
 export { Consumption }

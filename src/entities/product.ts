@@ -1,3 +1,4 @@
+import { Consumption } from "./consumption";
 import { ContentSupplier } from "./content-supplier";
 
 interface Product {
@@ -5,7 +6,8 @@ interface Product {
     title: string,
     size: number,
     price: number,
-    supplier: ContentSupplier
+    supplier: ContentSupplier,
+    consumptions: Consumption[]
 }
 
 export { Product }
