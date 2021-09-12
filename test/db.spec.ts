@@ -84,6 +84,7 @@ describe('test database', () => {
         expect(consumption.product).toEqual(product.id)
         expect(user.consumptions[0]).toEqual(consumption.id)
         expect(product.consumptions[0]).toEqual(consumption.id)
+        expect(consumption.date).toBeDefined();
         await consumptions.delete(consumption);
         await products.delete(product);
         await users.delete(user);

@@ -19,11 +19,15 @@ export class ConsumptionDB implements Consumption {
     @Column()
     user: string;
 
+    @Column()
+    date: Date;
+
     getRange(): number {
         return Math.abs(this.end_location - this.start_location);
     }
 
     reset(func){
         this.id = func();
+        this.date = new Date();
     }
 }
