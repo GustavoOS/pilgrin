@@ -4,32 +4,27 @@ import { Connection, createConnection } from "typeorm";
 import { UserDB } from "../src/db/schema/User";
 import { ConsumptionDB } from "../src/db/schema/ConsumptionDB";
 import { ProductDB } from "../src/db/schema/Product";
-import { ConsumptionDBFactory } from "../src/db/factories";
-import { v4 as uuidv4 } from 'uuid';
+import { ConsumptionDBFactory, UsageRecordDBFactory } from "../src/db/factories";
 import { createProduct, createUser } from "./utils";
+import { UsageRecordDB } from "../src/db/schema/UsageRecord";
 
 
-describe("Test Create Consumption Use Case", ()=>{
+describe("Test Create Consumption Use Case", () => {
     let connection: Connection;
+    let userGW, productGW, useCase, consumptionGW, records;
+    let user, product;
 
     beforeAll(async () => {
         connection = await createConnection();
     })
 
+    beforeEach(async () => {
+        build_use_case(connection);
+        user = await createUser(userGW);
+        product = await createProduct(productGW);
+    })
+
     test('Test Happy path', async () => {
-        const uGW = connection.getRepository(UserDB);
-        const pGW = connection.getRepository(ProductDB);
-        const cGW = connection.getRepository(ConsumptionDB);
-        const useCase = new CreateConsumptionUseCase(
-            uGW,
-            pGW,
-            cGW,
-            new ConsumptionDBFactory(),
-            uuidv4
-        )
-        let user = await createUser(uGW);
-        let product = await createProduct(pGW);
-        expect(user.id).not.toEqual("9becdb27-a77f-4f30-858a-582f3a643d0c")
         const request = {
             'user': user.id,
             'product': product.id,
@@ -37,12 +32,13 @@ describe("Test Create Consumption Use Case", ()=>{
             'start_location': 3
         };
         await useCase.execute(request);
-
-        user = await uGW.findOne(user.id)
-        product = await pGW.findOne(product.id)
+        user = await userGW.findOne(user.id)
+        product = await productGW.findOne(product.id)
         expect(user.consumptions.length).toEqual(1);
-        const consumption = await cGW.findOne(useCase.consumption.id);
-        expect(user.consumptions[0]).toEqual(product.consumptions[0])
+        const consumption = await consumptionGW.findOne(useCase.consumption.id);
+
+        const record = await records.findOne({ user: user.id, product: product.id })
+        expect(record.accumulated).toEqual(72)
         expect(useCase.consumption).toBeDefined()
         expect(useCase.consumption.id).toBeDefined()
         expect(consumption).toBeDefined()
@@ -50,8 +46,76 @@ describe("Test Create Consumption Use Case", ()=>{
         expect(consumption.start_location).toEqual(3)
         expect(consumption.user).toEqual(request.user)
         expect(consumption.product).toEqual(product.id)
+        consumptionGW.delete(consumption)
     })
-    afterAll(async ()=>{
+
+    test("Test 2 consumptions", async () => {
+        let request = {
+            'user': user.id,
+            'product': product.id,
+            'end_location': 10,
+            'start_location': 0
+        };
+        await useCase.execute(request);
+        request.start_location = 10
+        request.end_location = 20
+        await useCase.execute(request);
+        const record = await records.findOne({ user: user.id, product: product.id });
+        expect(record).toBeDefined();
+        expect(record.accumulated).toEqual(20);
+    })
+
+    test("Test Invalid user", async () => {
+        const request = {
+            'user': 'hu3BR',
+            'product': product.id,
+            'end_location': 10,
+            'start_location': 0
+        };
+        try {
+            await useCase.execute(request);
+            fail('Did not throw')
+        } catch (error) {
+            expect(error.message).toEqual("Resource not found")
+        }
+    })
+
+    test("Test Invalid Product", async () => {
+        const request = {
+            'user': user.id,
+            'product': 'hu3BR',
+            'end_location': 10,
+            'start_location': 0
+        };
+        try {
+            await useCase.execute(request);
+            fail('Did not throw')
+        } catch (error) {
+            expect(error.message).toEqual("Resource not found")
+        }
+    })
+
+    afterEach(async () => {
+        userGW.delete(user)
+        productGW.delete(product)
+    })
+
+    afterAll(async () => {
         await connection.close();
     })
+
+    function build_use_case(connection: Connection) {
+        userGW = connection.getRepository(UserDB);
+        productGW = connection.getRepository(ProductDB);
+        consumptionGW = connection.getRepository(ConsumptionDB);
+        records = connection.getRepository(UsageRecordDB)
+        useCase = new CreateConsumptionUseCase(
+            userGW,
+            productGW,
+            consumptionGW,
+            records,
+            new ConsumptionDBFactory(),
+            new UsageRecordDBFactory()
+        );
+    }
 })

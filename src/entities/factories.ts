@@ -1,6 +1,7 @@
 import { Consumption } from "./consumption";
 import { ContentSupplier } from "./content-supplier";
 import { Product } from "./product";
+import { UsageRecord } from "./usage-record";
 import { User } from "./user";
 
 interface ConsumptionFactory {
@@ -19,9 +20,14 @@ interface UserFactory {
     create(): User
 }
 
+interface UsageRecordFactory{
+    create(): UsageRecord
+}
+
 export {
     ConsumptionFactory,
     SupplierFactory,
     ProductFactory,
-    UserFactory
+    UserFactory,
+    UsageRecordFactory
 }
