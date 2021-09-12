@@ -61,7 +61,7 @@ describe('test database', () => {
         suppliers.delete(supplier);
     })
 
-    test('test consumption', async()=>{
+    test('test consumption', async () => {
         const products = connection.getRepository(ProductDB);
         const users = connection.getRepository(UserDB);
         let product = await createProduct(products);
@@ -83,6 +83,47 @@ describe('test database', () => {
         expect(consumption.product).toEqual(product.id)
         expect(user.consumptions[0]).toEqual(consumption.id)
         expect(product.consumptions[0]).toEqual(consumption.id)
+        await consumptions.delete(consumption);
+        await products.delete(product);
+        await users.delete(user);
+    })
+
+    test("After 2 users created, find One will fetch the right user", async ()=>{
+        const userRepository = connection.getRepository(UserDB)
+        const user1 = await createUser(userRepository)
+        const user2 = await createUser(userRepository)
+        const fetched = await userRepository.findOne(user2.id)
+        expect(fetched.id).not.toEqual(user1.id)
+        expect(fetched.id).toEqual(user2.id)
+    })
+
+    test("Test user consumption array save", async () => {
+        const users = connection.getRepository(UserDB)
+        let user = await createUser(users)
+        user.addConsumption("1")
+        user.addConsumption("2")
+        await users.save(user);
+        user = await users.findOne(user.id)
+        expect(user.consumptions.length).toEqual(2)
+    })
+
+    test('Test Manual Consumption 1', async () =>{
+        const consumptions = connection.getRepository(ConsumptionDB);
+        expect(consumptions).toBeDefined();
+        const consumption:ConsumptionDB = new ConsumptionDB();
+        consumption.reset(uuidv4)
+        consumption.start_location = 0;
+        consumption.end_location = 25;
+        consumption.product = "produto";
+        consumption.user = "user"
+        expect(consumption.id).toBeDefined()
+        await consumptions.save(consumption)
+        let created = await consumptions.findOne(consumption.id);
+        expect(created).toBeDefined()
+    })
+
+    afterAll(async ()=>{
+        await connection.close();
     })
 })
 
@@ -94,16 +135,6 @@ function createSupplier() {
     return supplier;
 }
 
-async function createUser(users) {
-    const user = new UserDB();
-    user.reset(uuidv4);
-    user.firstName = "Carlito";
-    user.lastName = "Paes";
-    user.age = 50;
-    await users.save(user);
-    return user;
-}
-
 async function createProduct(products) {
     let product = new ProductDB();
     product.reset(uuidv4);
@@ -112,4 +143,14 @@ async function createProduct(products) {
     product.title = "Devocional";
     await products.save(product);
     return product;
+}
+
+async function createUser(users) {
+    const user = new UserDB();
+    user.reset(uuidv4);
+    user.firstName = "Carlito";
+    user.lastName = "Paes";
+    user.age = 50;
+    await users.save(user);
+    return user;
 }

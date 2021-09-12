@@ -6,6 +6,7 @@ interface User extends Resetable {
     lastName: string;
     age: number;
     consumptions: string[];
+    addConsumption(id:string):void
 }
 
 export { User }

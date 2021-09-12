@@ -1,6 +1,5 @@
-import { Entity, Column, PrimaryColumn, OneToMany } from "typeorm";
+import { Entity, Column, PrimaryColumn } from "typeorm";
 import { User } from "../../entities/user";
-import { ConsumptionDB } from "./ConsumptionDB";
 
 @Entity()
 export class UserDB implements User{
@@ -25,4 +24,10 @@ export class UserDB implements User{
         this.consumptions = []
     }
 
+    addConsumption(id){
+        if(!this.consumptions)
+            this.consumptions = [];
+        this.consumptions.push(id)
+        console.log(this.consumptions)
+    }
 }
