@@ -6,6 +6,7 @@ import { ConsumptionDB } from "../src/db/schema/ConsumptionDB";
 import { ProductDB } from "../src/db/schema/Product";
 import { ConsumptionDBFactory } from "../src/db/factories";
 import { v4 as uuidv4 } from 'uuid';
+import { createProduct, createUser } from "./utils";
 
 
 describe("Test Create Consumption Use Case", ()=>{
@@ -54,24 +55,3 @@ describe("Test Create Consumption Use Case", ()=>{
         await connection.close();
     })
 })
-
-
-async function createProduct(products) {
-    let product = new ProductDB();
-    product.reset(uuidv4);
-    product.price = 50;
-    product.size = 1000;
-    product.title = "Devocional";
-    await products.save(product);
-    return product;
-}
-
-async function createUser(users) {
-    const user = new UserDB();
-    user.reset(uuidv4);
-    user.firstName = "Carlito";
-    user.lastName = "Paes";
-    user.age = 50;
-    await users.save(user);
-    return user;
-}

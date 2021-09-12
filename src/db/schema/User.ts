@@ -23,11 +23,4 @@ export class UserDB implements User{
         this.id = func();
         this.consumptions = []
     }
-
-    addConsumption(id){
-        if(!this.consumptions)
-            this.consumptions = [];
-        this.consumptions.push(id)
-        console.log(this.consumptions)
-    }
 }

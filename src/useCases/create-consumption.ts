@@ -28,7 +28,7 @@ class CreateConsumptionUseCase {
     
     private async saveConsumptionIntoUser(dao: ConsumptionCreationDAO) {
         const user = await this.userGW.findOne(dao.user);
-        user.addConsumption(this.consumption.id)
+        user.consumptions.push(this.consumption.id)
         await this.userGW.save(user);
     }
     

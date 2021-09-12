@@ -5,6 +5,7 @@ import { ConsumptionDB } from "../src/db/schema/ConsumptionDB";
 import { ContentSupplierDB } from "../src/db/schema/ContentSupplier";
 import { ProductDB } from "../src/db/schema/Product";
 import { UserDB } from "../src/db/schema/User";
+import { createProduct, createSupplier, createUser } from "./utils";
 
 
 
@@ -95,16 +96,19 @@ describe('test database', () => {
         const fetched = await userRepository.findOne(user2.id)
         expect(fetched.id).not.toEqual(user1.id)
         expect(fetched.id).toEqual(user2.id)
+        userRepository.delete(user2)
+        userRepository.delete(user1)
     })
 
     test("Test user consumption array save", async () => {
         const users = connection.getRepository(UserDB)
         let user = await createUser(users)
-        user.addConsumption("1")
-        user.addConsumption("2")
+        user.consumptions.push("1")
+        user.consumptions.push("2")
         await users.save(user);
         user = await users.findOne(user.id)
         expect(user.consumptions.length).toEqual(2)
+        users.delete(user)
     })
 
     test('Test Manual Consumption 1', async () =>{
@@ -128,29 +132,4 @@ describe('test database', () => {
 })
 
 
-function createSupplier() {
-    const supplier = new ContentSupplierDB();
-    supplier.reset(uuidv4);
-    supplier.name = "Editora Pilgrin";
-    return supplier;
-}
 
-async function createProduct(products) {
-    let product = new ProductDB();
-    product.reset(uuidv4);
-    product.price = 50;
-    product.size = 1000;
-    product.title = "Devocional";
-    await products.save(product);
-    return product;
-}
-
-async function createUser(users) {
-    const user = new UserDB();
-    user.reset(uuidv4);
-    user.firstName = "Carlito";
-    user.lastName = "Paes";
-    user.age = 50;
-    await users.save(user);
-    return user;
-}
