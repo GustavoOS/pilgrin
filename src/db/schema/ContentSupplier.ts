@@ -3,7 +3,7 @@ import { ContentSupplier } from "../../entities/content-supplier";
 
 
 @Entity()
-export class ContentSupplierDB implements ContentSupplier {
+class ContentSupplierDB implements ContentSupplier {
 
     @PrimaryColumn()
     id: string;
@@ -19,3 +19,5 @@ export class ContentSupplierDB implements ContentSupplier {
         this.products = [];
     }
 }
+
+export {ContentSupplierDB}

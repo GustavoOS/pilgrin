@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryColumn } from "typeorm";
 import { User } from "../../entities/user";
 
 @Entity()
-export class UserDB implements User{
+class UserDB implements User{
 
     @PrimaryColumn()
     id: string;
@@ -24,3 +24,5 @@ export class UserDB implements User{
         this.consumptions = []
     }
 }
+
+export {UserDB}

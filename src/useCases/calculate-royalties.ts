@@ -31,6 +31,7 @@ class CalculateRoyaltiesUseCase {
             reportItem.supplier = supplier.name;
             this.report.items.push(reportItem);
         }
+        reportItem.users++;
         if (product.canCharge(register.accumulated))
             reportItem.addValue(product.calculateCharge())
     }

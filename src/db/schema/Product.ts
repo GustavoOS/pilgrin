@@ -1,11 +1,9 @@
-import { Entity, PrimaryColumn, ManyToOne, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column } from "typeorm";
 import { Product } from "../../entities/product";
-import { ConsumptionDB } from "./ConsumptionDB";
-import { ContentSupplierDB } from "./ContentSupplier";
 
 
 @Entity()
-export class ProductDB implements Product {
+class ProductDB implements Product {
 
     @PrimaryColumn()
     id: string;
@@ -38,3 +36,5 @@ export class ProductDB implements Product {
         return parseFloat((this.price / 10).toFixed(2))
     }
 }
+
+export {ProductDB}

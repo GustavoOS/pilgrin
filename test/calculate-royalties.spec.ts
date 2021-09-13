@@ -7,12 +7,13 @@ import { UsageRecordDB } from "../src/db/schema/UsageRecord";
 import { ContentSupplier } from "../src/entities/content-supplier";
 import { createProduct, createSupplier } from "./utils";
 import { SupplierGateway } from "../src/gateways/supplier-gateway";
-import { ContentSupplierDB } from "../src/db/schema/ContentSupplier";
 import { Product } from "../src/entities/product";
 import { v4 as uuidv4 } from 'uuid';
 import { CalculateRoyaltiesUseCase } from "../src/useCases/calculate-royalties";
 import { UsageRecord } from "../src/entities/usage-record";
 import { Report, ReportPresenter } from "../src/useCases/presenters/report";
+import { CSVReportPresenter } from "../src/ui/presenters/report";
+import { ContentSupplierDB } from "../src/db/schema/ContentSupplier";
 
 describe("Calculate royalties", () => {
     let connection: Connection;
@@ -59,6 +60,7 @@ describe("Calculate royalties", () => {
         await useCase.execute()
         expect(presenter.report.items.length).toEqual(1)
         expect(presenter.report.items[0].value).toEqual(5)
+        expect(presenter.report.items[0].users).toEqual(1)
     })
 
     test("Test for 2 chargable consumptions", async() => {
@@ -66,7 +68,20 @@ describe("Calculate royalties", () => {
         await useCase.execute()
         expect(presenter.report.items.length).toEqual(1)
         expect(presenter.report.items[0].value).toEqual(10)
+        expect(presenter.report.items[0].users).toEqual(2)
         recordGW.delete(r);
+    })
+
+    test("Test CSV file generation", async () => {
+        const csv = new CSVReportPresenter();
+        useCase = new CalculateRoyaltiesUseCase(
+            supplierGW,
+            productGW,
+            recordGW,
+            csv
+        )
+        await useCase.execute()
+        expect(csv.csv).toBeDefined();
     })
 
     afterEach(async () => {

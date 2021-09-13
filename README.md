@@ -12,12 +12,17 @@ Avaliação parte de processo seletivo
 ```sh
     yarn install
 ```
+
 ## Running tests
 
 ```sh
     yarn test
 ```
 
+## Populate DB
+```sh
+    yarn populatedb
+```
 ## Run web server
 
 ```sh

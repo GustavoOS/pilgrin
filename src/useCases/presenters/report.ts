@@ -7,6 +7,7 @@ class ReportItem {
     title: string;
     product: string;
     value: number = 0;
+    users: number = 0;
 
     addValue(value: number) {
         this.value += value
