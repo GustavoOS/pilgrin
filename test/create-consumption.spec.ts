@@ -95,8 +95,6 @@ describe("Test Create Consumption Use Case", () => {
             fail('Did not throw')
         } catch (error) {
             expect(error.message).toEqual("Resource not found")
-            const record = await records.findOne(null);
-            records.delete(record);
         }
     })
 

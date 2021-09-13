@@ -1,6 +1,7 @@
 import { ProductGateway } from "../gateways/product-gateway";
 import { SupplierGateway } from "../gateways/supplier-gateway";
 import { UsageRecordGateway } from "../gateways/usage-record-gateway";
+import { Report, ReportItem, ReportPresenter } from "./presenters/report";
 
 class CalculateRoyaltiesUseCase {
     report: Report;
@@ -8,7 +9,8 @@ class CalculateRoyaltiesUseCase {
     constructor(
         private supplierGW: SupplierGateway,
         private productGW: ProductGateway,
-        private registerGW: UsageRecordGateway
+        private registerGW: UsageRecordGateway,
+        private presenter: ReportPresenter
     ) { }
 
     async execute() {
@@ -16,7 +18,7 @@ class CalculateRoyaltiesUseCase {
         this.report = new Report();
         for (const register of registers)
             await this.generateReportFromRegister(register)
-        return this.report;
+        this.presenter.receive(this.report);
     }
 
     async generateReportFromRegister(register) {
@@ -32,22 +34,6 @@ class CalculateRoyaltiesUseCase {
         if (product.canCharge(register.accumulated))
             reportItem.addValue(product.calculateCharge())
     }
-}
-
-class ReportItem {
-    supplier: string;
-    title: string;
-    product: string;
-    value: number = 0;
-
-    addValue(value: number) {
-        this.value += value
-    }
-}
-
-class Report {
-    items: ReportItem[] = [];
-    date = new Date();
 }
 
 export { CalculateRoyaltiesUseCase }
