@@ -5,7 +5,7 @@ import { UsageRecordGateway } from "../src/gateways/usage-record-gateway";
 import { ProductDB } from "../src/db/schema/Product";
 import { UsageRecordDB } from "../src/db/schema/UsageRecord";
 import { ContentSupplier } from "../src/entities/content-supplier";
-import { createProduct, createSupplier } from "./utils";
+import { clear, createProduct, createSupplier } from "./utils";
 import { SupplierGateway } from "../src/gateways/supplier-gateway";
 import { Product } from "../src/entities/product";
 import { v4 as uuidv4 } from 'uuid';
@@ -35,6 +35,7 @@ describe("Calculate royalties", () => {
     })
 
     beforeEach(async () => {
+        await clear(connection);
         productGW = connection.getRepository(ProductDB);
         recordGW = connection.getRepository(UsageRecordDB);
         supplierGW = connection.getRepository(ContentSupplierDB);
@@ -84,13 +85,8 @@ describe("Calculate royalties", () => {
         expect(csv.csv).toBeDefined();
     })
 
-    afterEach(async () => {
-        productGW.delete(product)
-        supplierGW.delete(supplier)
-        recordGW.delete(record)
-    })
-
     afterAll(async () => {
+        await clear(connection);
         await connection.close();
     })
 

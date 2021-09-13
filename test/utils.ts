@@ -2,6 +2,7 @@ import { ContentSupplierDB } from "../src/db/schema/ContentSupplier";
 import { v4 as uuidv4 } from 'uuid';
 import { ProductDB } from "../src/db/schema/Product";
 import { UserDB } from "../src/db/schema/User";
+import { Connection } from "typeorm";
 
 function createSupplier() {
     const supplier = new ContentSupplierDB();
@@ -30,8 +31,18 @@ async function createUser(users) {
     return user;
 }
 
+async function clear(connection: Connection) {
+    const entities = connection.entityMetadatas;
+
+    for (const entity of entities) {
+        const repository = connection.getRepository(entity.name);
+        await repository.clear();
+    }
+};
+
 export {
     createUser,
     createSupplier,
-    createProduct
+    createProduct,
+    clear
 }

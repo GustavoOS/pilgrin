@@ -5,13 +5,13 @@ import { UserDB } from "../src/db/schema/User";
 import { ConsumptionDB } from "../src/db/schema/ConsumptionDB";
 import { ProductDB } from "../src/db/schema/Product";
 import { ConsumptionDBFactory, UsageRecordDBFactory } from "../src/db/factories";
-import { createProduct, createUser } from "./utils";
+import { clear, createProduct, createUser } from "./utils";
 import { UsageRecordDB } from "../src/db/schema/UsageRecord";
 
 
 describe("Test Create Consumption Use Case", () => {
     let connection: Connection;
-    let userGW, productGW, useCase, consumptionGW, records;
+    let userGW, productGW, useCase:CreateConsumptionUseCase, consumptionGW, records;
     let user, product;
 
     beforeAll(async () => {
@@ -19,6 +19,7 @@ describe("Test Create Consumption Use Case", () => {
     })
 
     beforeEach(async () => {
+        await clear(connection)
         build_use_case(connection);
         user = await createUser(userGW);
         product = await createProduct(productGW);
@@ -78,8 +79,6 @@ describe("Test Create Consumption Use Case", () => {
             fail('Did not throw')
         } catch (error) {
             expect(error.message).toEqual("Resource not found")
-            const record = await records.findOne(null);
-            records.delete(record);
         }
     })
 
@@ -104,6 +103,7 @@ describe("Test Create Consumption Use Case", () => {
     })
 
     afterAll(async () => {
+        await clear(connection)
         await connection.close();
     })
 

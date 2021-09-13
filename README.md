@@ -15,6 +15,8 @@ Avaliação parte de processo seletivo
 
 ## Running tests
 
+The following script will run the tests written to validate the use cases. Note that it will erase the database.
+
 ```sh
     yarn test
 ```
