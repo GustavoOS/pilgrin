@@ -63,6 +63,7 @@ describe("Test Create Consumption Use Case", () => {
         const record = await records.findOne({ user: user.id, product: product.id });
         expect(record).toBeDefined();
         expect(record.accumulated).toEqual(20);
+        records.delete(record);
     })
 
     test("Test Invalid user", async () => {
@@ -77,6 +78,8 @@ describe("Test Create Consumption Use Case", () => {
             fail('Did not throw')
         } catch (error) {
             expect(error.message).toEqual("Resource not found")
+            const record = await records.findOne(null);
+            records.delete(record);
         }
     })
 
@@ -92,6 +95,8 @@ describe("Test Create Consumption Use Case", () => {
             fail('Did not throw')
         } catch (error) {
             expect(error.message).toEqual("Resource not found")
+            const record = await records.findOne(null);
+            records.delete(record);
         }
     })
 

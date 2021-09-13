@@ -6,7 +6,9 @@ interface Product extends Resetable {
     size: number,
     price: number,
     supplier: string,
-    consumptions: string[]
+    consumptions: string[],
+    canCharge(consumption): boolean
+    calculateCharge(): number
 }
 
 export { Product }

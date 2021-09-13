@@ -53,6 +53,8 @@ describe('test database', () => {
         product.title = "Devocional";
         product.supplier = supplier.id;
         await products.save(product);
+        expect(product.canCharge(400)).toBeFalsy()
+        expect(product.canCharge(600)).toBeTruthy()
         supplier.products = [product.id];
         await suppliers.save(supplier);
         expect(product.supplier).toEqual(supplier.id);
@@ -90,7 +92,7 @@ describe('test database', () => {
         await users.delete(user);
     })
 
-    test("After 2 users created, find One will fetch the right user", async ()=>{
+    test("After 2 users created, find One will fetch the right user", async () => {
         const userRepository = connection.getRepository(UserDB)
         const user1 = await createUser(userRepository)
         const user2 = await createUser(userRepository)
@@ -112,10 +114,10 @@ describe('test database', () => {
         users.delete(user)
     })
 
-    test('Test Manual Consumption 1', async () =>{
+    test('Test Manual Consumption 1', async () => {
         const consumptions = connection.getRepository(ConsumptionDB);
         expect(consumptions).toBeDefined();
-        const consumption:ConsumptionDB = new ConsumptionDB();
+        const consumption: ConsumptionDB = new ConsumptionDB();
         consumption.reset(uuidv4)
         consumption.start_location = 0;
         consumption.end_location = 25;
@@ -127,7 +129,7 @@ describe('test database', () => {
         expect(created).toBeDefined()
     })
 
-    afterAll(async ()=>{
+    afterAll(async () => {
         await connection.close();
     })
 })

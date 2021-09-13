@@ -10,7 +10,7 @@ export class ProductDB implements Product {
     @PrimaryColumn()
     id: string;
 
-    @Column({nullable: true})
+    @Column({ nullable: true })
     supplier: string
 
     @Column()
@@ -28,5 +28,13 @@ export class ProductDB implements Product {
     reset(func: CallableFunction) {
         this.id = func();
         this.consumptions = [];
+    }
+
+    canCharge(consumption: any): boolean {
+        return consumption >= Math.ceil(this.size / 2)
+    }
+
+    calculateCharge(): number {
+        return parseFloat((this.price / 10).toFixed(2))
     }
 }
