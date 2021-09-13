@@ -6,7 +6,7 @@
     "author": "Gustavo Souza <gustavo.souza@tinnova.com.br>",
     "license": "MIT",
     "scripts": {
-        "start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/ui/server.ts",
+        "start": "tsnd --transpile-only --respawn --ignore-watch node_modules src/ui/index.ts",
         "test": "jest",
         "coverage": "jest --coverage",
         "populatedb": "tsnd --transpile-only src/db/populatedb.ts"

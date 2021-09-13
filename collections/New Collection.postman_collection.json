@@ -1,0 +1,82 @@
+{
+	"info": {
+		"_postman_id": "4925c0e3-d496-4a89-b5fd-998837f17bd3",
+		"name": "New Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Consumption",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user\": \"772c07df-cc0d-412d-8d57-e81bdfe4532a\",\n    \"product\": \"4694f900-e2e2-457d-81f3-66d1cccd3013\",\n    \"start_location\": 0,\n    \"end_location\": 200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/consumption",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"consumption"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Report",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user\": \"772c07df-cc0d-412d-8d57-e81bdfe4532a\",\n    \"product\": \"4694f900-e2e2-457d-81f3-66d1cccd3013\",\n    \"start_location\": 0,\n    \"end_location\": 200\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/report",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"report"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": null,
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
