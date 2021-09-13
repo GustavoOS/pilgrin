@@ -20,9 +20,13 @@ Avaliação parte de processo seletivo
 ```
 
 ## Populate DB
+
+There's a script to populate the database:
 ```sh
     yarn populatedb
 ```
+The configured DBSM is SQLite. It's file is under bin/database.sqlite
+
 ## Run web server
 
 ```sh
